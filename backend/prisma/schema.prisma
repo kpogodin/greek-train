@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Word {
+  id            Int        @id @default(autoincrement())
+  translationRu String
+  pronunciation String?
+  category      String?
+  forms         WordForm[]
+  createdAt     DateTime   @default(now())
+}
+
+model WordForm {
+  id     Int    @id @default(autoincrement())
+  word   Word   @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  wordId Int
+  form   String
+
+  @@index([wordId])
+}

@@ -1,0 +1,15 @@
+[Unit]
+Description=Greek Train backend
+After=network.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/opt/greek-train/app/backend
+EnvironmentFile=/opt/greek-train/app/backend/.env
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
