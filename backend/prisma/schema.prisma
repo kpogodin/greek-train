@@ -12,6 +12,7 @@ model Word {
   translationRu String
   pronunciation String?
   category      String?
+  difficulty    Int        @default(3)
   forms         WordForm[]
   createdAt     DateTime   @default(now())
 }

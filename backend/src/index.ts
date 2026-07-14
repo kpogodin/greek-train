@@ -18,11 +18,17 @@ app.get('/words', async (_req, res) => {
 
 app.get('/words/random', async (req, res) => {
   const excludeId = req.query.exclude ? Number(req.query.exclude) : undefined
-  const where = excludeId ? { id: { not: excludeId } } : undefined
+  const difficulty = req.query.difficulty ? Number(req.query.difficulty) : undefined
+
+  const baseWhere: { difficulty?: number } = {}
+  if (difficulty) baseWhere.difficulty = difficulty
+
+  const where: { id?: { not: number }; difficulty?: number } = { ...baseWhere }
+  if (excludeId) where.id = { not: excludeId }
 
   const count = await prisma.word.count({ where })
   if (count === 0) {
-    const word = await prisma.word.findFirst({ include: { forms: true } })
+    const word = await prisma.word.findFirst({ where: baseWhere, include: { forms: true } })
     res.json(word ?? null)
     return
   }
