@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { getLearnerName } from '../learner'
+import { getHideHints, setHideHints } from '../hints'
 
 interface WordForm {
   id: number
@@ -17,6 +18,8 @@ interface Word {
   forms: WordForm[]
 }
 
+const SWIPE_MIN_DISTANCE = 60
+
 function Home() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -24,6 +27,22 @@ function Home() {
   const [word, setWord] = useState<Word | null>(null)
   const [error, setError] = useState(false)
   const [empty, setEmpty] = useState(false)
+  const [hideHints, setHideHintsState] = useState(getHideHints)
+  const [revealedPron, setRevealedPron] = useState(false)
+  const [revealedTranslation, setRevealedTranslation] = useState(false)
+  const [dragDirection, setDragDirection] = useState<'left' | 'right' | null>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const touchStart = useRef<{ x: number; y: number; onSpoiler: boolean; dragging: boolean } | null>(
+    null,
+  )
+
+  const resetCardStyle = useCallback((animated: boolean) => {
+    const card = cardRef.current
+    if (!card) return
+    card.style.transition = animated ? 'transform 0.2s ease, opacity 0.2s ease' : 'none'
+    card.style.transform = 'translateX(0)'
+    card.style.opacity = '1'
+  }, [])
 
   const fetchWord = useCallback(
     (excludeId?: number) => {
@@ -42,14 +61,13 @@ function Home() {
           }
           setEmpty(false)
           setWord(res.data)
-          const learnerName = getLearnerName()
-          if (learnerName && res.data) {
-            api.post('/progress/word', { learnerName, wordId: res.data.id }).catch(() => {})
-          }
+          setRevealedPron(false)
+          setRevealedTranslation(false)
+          resetCardStyle(false)
         })
         .catch(() => setError(true))
     },
-    [category],
+    [category, resetCardStyle],
   )
 
   useEffect(() => {
@@ -61,6 +79,79 @@ function Home() {
     fetchWord(word?.id)
   }, [fetchWord, word])
 
+  const markKnown = useCallback(() => {
+    if (!word) return
+    const learnerName = getLearnerName()
+    if (learnerName) {
+      api.post('/progress/word', { learnerName, wordId: word.id }).catch(() => {})
+    }
+    fetchWord(word.id)
+  }, [word, fetchWord])
+
+  const markUnknown = useCallback(() => {
+    if (!word) return
+    fetchWord(word.id)
+  }, [word, fetchWord])
+
+  const toggleHideHints = useCallback(() => {
+    setHideHintsState((v) => {
+      const next = !v
+      setHideHints(next)
+      return next
+    })
+  }, [])
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0]
+    const onSpoiler = (e.target as HTMLElement).closest('.spoiler-block, .hide-hints-toggle') !== null
+    touchStart.current = { x: touch.clientX, y: touch.clientY, onSpoiler, dragging: false }
+    if (cardRef.current) cardRef.current.style.transition = 'none'
+  }, [])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const start = touchStart.current
+    const card = cardRef.current
+    if (!start || start.onSpoiler || !card) return
+    const touch = e.touches[0]
+    const deltaX = touch.clientX - start.x
+    const deltaY = touch.clientY - start.y
+    if (!start.dragging && Math.abs(deltaX) < 10) return
+    if (!start.dragging && Math.abs(deltaY) > Math.abs(deltaX)) return
+    start.dragging = true
+    card.style.transform = `translateX(${deltaX}px) rotate(${deltaX / 20}deg)`
+    card.style.opacity = `${Math.max(0.4, 1 - Math.abs(deltaX) / 300)}`
+    setDragDirection(deltaX > 0 ? 'right' : 'left')
+  }, [])
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      const start = touchStart.current
+      touchStart.current = null
+      setDragDirection(null)
+      if (!start || start.onSpoiler || !word) return
+      const card = cardRef.current
+      const touch = e.changedTouches[0]
+      const deltaX = touch.clientX - start.x
+      const deltaY = touch.clientY - start.y
+      const isHorizontal = Math.abs(deltaX) > Math.abs(deltaY) * 1.5
+
+      if (isHorizontal && deltaX > SWIPE_MIN_DISTANCE && card) {
+        card.style.transition = 'transform 0.15s ease, opacity 0.15s ease'
+        card.style.transform = 'translateX(120%) rotate(15deg)'
+        card.style.opacity = '0'
+        window.setTimeout(() => markKnown(), 150)
+      } else if (isHorizontal && deltaX < -SWIPE_MIN_DISTANCE && card) {
+        card.style.transition = 'transform 0.15s ease, opacity 0.15s ease'
+        card.style.transform = 'translateX(-120%) rotate(-15deg)'
+        card.style.opacity = '0'
+        window.setTimeout(() => markUnknown(), 150)
+      } else if (card) {
+        resetCardStyle(true)
+      }
+    },
+    [word, markKnown, markUnknown, resetCardStyle],
+  )
+
   let content
   if (error) {
     content = <p className="status">Не удалось загрузить слова.</p>
@@ -69,24 +160,52 @@ function Home() {
   } else if (!word) {
     content = <p className="status">Загрузка…</p>
   } else {
+    const showPron = !hideHints || revealedPron
+    const showTranslation = !hideHints || revealedTranslation
     content = (
-      <div className="word-display">
+      <div className="word-display" ref={cardRef}>
         {word.category && <div className="word-category">{word.category}</div>}
         <div className="word-forms">
           {word.forms.map((f) => (
             <div key={f.id}>{f.form}</div>
           ))}
         </div>
-        {word.pronunciation && (
-          <div className="word-pronunciation">{word.pronunciation}</div>
+        {word.pronunciation &&
+          (showPron ? (
+            <div className="word-pronunciation">{word.pronunciation}</div>
+          ) : (
+            <div
+              className="spoiler-block spoiler-pronunciation"
+              onClick={(e) => {
+                e.stopPropagation()
+                setRevealedPron(true)
+              }}
+            />
+          ))}
+        {showTranslation ? (
+          <div className="word-translation">{word.translationRu}</div>
+        ) : (
+          <div
+            className="spoiler-block spoiler-translation"
+            onClick={(e) => {
+              e.stopPropagation()
+              setRevealedTranslation(true)
+            }}
+          />
         )}
-        <div className="word-translation">{word.translationRu}</div>
+        <p className="swipe-hint">← Не знаю · Знаю →</p>
       </div>
     )
   }
 
   return (
-    <section className="screen" onClick={shuffle}>
+    <section
+      className={`screen word-screen ${dragDirection ? `drag-${dragDirection}` : ''}`}
+      onClick={shuffle}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <button
         type="button"
         className="back-btn"
@@ -97,8 +216,41 @@ function Home() {
       >
         ← Категории
       </button>
+      <button
+        type="button"
+        className={`hide-hints-toggle${hideHints ? ' active' : ''}`}
+        onClick={(e) => {
+          e.stopPropagation()
+          toggleHideHints()
+        }}
+      >
+        {hideHints ? '🙈 Подсказки скрыты' : '👁 Подсказки видны'}
+      </button>
       {content}
-      {word && !error && !empty && <p className="hint">Тапни, чтобы увидеть другое слово</p>}
+      {word && !error && !empty && (
+        <div className="bottom-bar">
+          <button
+            type="button"
+            className="action-btn"
+            onClick={(e) => {
+              e.stopPropagation()
+              markUnknown()
+            }}
+          >
+            ✕ Не знаю
+          </button>
+          <button
+            type="button"
+            className="action-btn"
+            onClick={(e) => {
+              e.stopPropagation()
+              markKnown()
+            }}
+          >
+            ✓ Знаю
+          </button>
+        </div>
+      )}
     </section>
   )
 }
