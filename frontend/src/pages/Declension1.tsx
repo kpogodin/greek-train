@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { getLearnerName } from '../learner'
@@ -24,6 +24,8 @@ const HINT_ROWS = [
   ['Αυτοί', '-ουν(ε)'],
 ]
 
+const SWIPE_MIN_DISTANCE = 60
+
 function Declension1() {
   const navigate = useNavigate()
   const [sentence, setSentence] = useState<ConjugationSentence | null>(null)
@@ -32,6 +34,8 @@ function Declension1() {
   const [answer, setAnswer] = useState('')
   const [status, setStatus] = useState<Status>('idle')
   const [showHint, setShowHint] = useState(false)
+  const bottomBarRef = useRef<HTMLDivElement>(null)
+  const touchStart = useRef<{ x: number; y: number; onInput: boolean } | null>(null)
 
   const fetchSentence = useCallback((excludeId?: number) => {
     setError(false)
@@ -73,6 +77,50 @@ function Declension1() {
     fetchSentence(sentence?.id)
   }, [fetchSentence, sentence])
 
+  // Keep the Check/Дальше bar above the iOS on-screen keyboard: position:fixed
+  // elements are anchored to the layout viewport, which doesn't shrink when
+  // the keyboard opens, so the bar ends up hidden below it unless we track
+  // the visual viewport ourselves.
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv || !bottomBarRef.current) return
+
+    const reposition = () => {
+      if (!bottomBarRef.current) return
+      const keyboardInset = window.innerHeight - vv.height - vv.offsetTop
+      bottomBarRef.current.style.bottom = `${Math.max(20, keyboardInset + 20)}px`
+    }
+
+    reposition()
+    vv.addEventListener('resize', reposition)
+    vv.addEventListener('scroll', reposition)
+    return () => {
+      vv.removeEventListener('resize', reposition)
+      vv.removeEventListener('scroll', reposition)
+    }
+  }, [])
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0]
+    const onInput = (e.target as HTMLElement).closest('.conjugation-input') !== null
+    touchStart.current = { x: touch.clientX, y: touch.clientY, onInput }
+  }, [])
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      const start = touchStart.current
+      touchStart.current = null
+      if (!start || start.onInput || !sentence) return
+      const touch = e.changedTouches[0]
+      const deltaX = touch.clientX - start.x
+      const deltaY = touch.clientY - start.y
+      if (deltaX < -SWIPE_MIN_DISTANCE && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+        next()
+      }
+    },
+    [next, sentence],
+  )
+
   let content
   if (error) {
     content = <p className="status">Не удалось загрузить упражнения.</p>
@@ -107,12 +155,17 @@ function Declension1() {
         {status === 'correct' && (
           <div className="conjugation-pronunciation">{sentence.pronunciation}</div>
         )}
+        <p className="swipe-hint">← Свайп для следующего</p>
       </div>
     )
   }
 
   return (
-    <section className={`screen conjugation-screen ${status}`}>
+    <section
+      className={`screen conjugation-screen ${status}`}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <button type="button" className="back-btn" onClick={() => navigate('/')}>
         ← Меню
       </button>
@@ -140,7 +193,7 @@ function Declension1() {
       )}
       {content}
       {sentence && !error && !empty && (
-        <div className="bottom-bar">
+        <div className="bottom-bar" ref={bottomBarRef}>
           <button type="button" className="action-btn" onClick={check}>
             Check
           </button>
