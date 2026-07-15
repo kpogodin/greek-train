@@ -305,6 +305,8 @@ body,
   align-items: center;
   gap: 16px;
   max-width: 480px;
+  touch-action: pan-y;
+  will-change: transform;
 }
 
 .conjugation-sentence {

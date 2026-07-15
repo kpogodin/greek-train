@@ -35,26 +35,41 @@ function Declension1() {
   const [status, setStatus] = useState<Status>('idle')
   const [showHint, setShowHint] = useState(false)
   const bottomBarRef = useRef<HTMLDivElement>(null)
-  const touchStart = useRef<{ x: number; y: number; onInput: boolean } | null>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const touchStart = useRef<{ x: number; y: number; onInput: boolean; dragging: boolean } | null>(
+    null,
+  )
 
-  const fetchSentence = useCallback((excludeId?: number) => {
-    setError(false)
-    api
-      .get<ConjugationSentence | null>('/conjugation/random', {
-        params: { group: 1, ...(excludeId ? { exclude: excludeId } : {}) },
-      })
-      .then((res) => {
-        if (!res.data) {
-          setEmpty(true)
-          return
-        }
-        setEmpty(false)
-        setSentence(res.data)
-        setAnswer('')
-        setStatus('idle')
-      })
-      .catch(() => setError(true))
+  const resetCardStyle = useCallback((animated: boolean) => {
+    const card = cardRef.current
+    if (!card) return
+    card.style.transition = animated ? 'transform 0.2s ease, opacity 0.2s ease' : 'none'
+    card.style.transform = 'translateX(0)'
+    card.style.opacity = '1'
   }, [])
+
+  const fetchSentence = useCallback(
+    (excludeId?: number) => {
+      setError(false)
+      api
+        .get<ConjugationSentence | null>('/conjugation/random', {
+          params: { group: 1, ...(excludeId ? { exclude: excludeId } : {}) },
+        })
+        .then((res) => {
+          if (!res.data) {
+            setEmpty(true)
+            return
+          }
+          setEmpty(false)
+          setSentence(res.data)
+          setAnswer('')
+          setStatus('idle')
+          resetCardStyle(false)
+        })
+        .catch(() => setError(true))
+    },
+    [resetCardStyle],
+  )
 
   useEffect(() => {
     fetchSentence()
@@ -103,7 +118,24 @@ function Declension1() {
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0]
     const onInput = (e.target as HTMLElement).closest('.conjugation-input') !== null
-    touchStart.current = { x: touch.clientX, y: touch.clientY, onInput }
+    touchStart.current = { x: touch.clientX, y: touch.clientY, onInput, dragging: false }
+    if (cardRef.current) cardRef.current.style.transition = 'none'
+  }, [])
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const start = touchStart.current
+    const card = cardRef.current
+    if (!start || start.onInput || !card) return
+    const touch = e.touches[0]
+    const deltaX = touch.clientX - start.x
+    const deltaY = touch.clientY - start.y
+    if (!start.dragging && Math.abs(deltaX) < 10) return
+    if (!start.dragging && Math.abs(deltaY) > Math.abs(deltaX)) return
+    start.dragging = true
+    // only follow the finger for leftward drags; slight rubber-band on the right
+    const dragX = deltaX < 0 ? deltaX : deltaX * 0.2
+    card.style.transform = `translateX(${dragX}px)`
+    card.style.opacity = `${Math.max(0.4, 1 - Math.abs(dragX) / 300)}`
   }, [])
 
   const handleTouchEnd = useCallback(
@@ -111,14 +143,22 @@ function Declension1() {
       const start = touchStart.current
       touchStart.current = null
       if (!start || start.onInput || !sentence) return
+      const card = cardRef.current
       const touch = e.changedTouches[0]
       const deltaX = touch.clientX - start.x
       const deltaY = touch.clientY - start.y
-      if (deltaX < -SWIPE_MIN_DISTANCE && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-        next()
+      const isSwipe = deltaX < -SWIPE_MIN_DISTANCE && Math.abs(deltaX) > Math.abs(deltaY) * 1.5
+
+      if (isSwipe && card) {
+        card.style.transition = 'transform 0.15s ease, opacity 0.15s ease'
+        card.style.transform = 'translateX(-120%)'
+        card.style.opacity = '0'
+        window.setTimeout(() => next(), 150)
+      } else if (card) {
+        resetCardStyle(true)
       }
     },
-    [next, sentence],
+    [next, sentence, resetCardStyle],
   )
 
   let content
@@ -130,7 +170,7 @@ function Declension1() {
     content = <p className="status">Загрузка…</p>
   } else {
     content = (
-      <div className="conjugation-exercise">
+      <div className="conjugation-exercise" ref={cardRef}>
         <div className="conjugation-sentence">
           {sentence.before}
           <input
@@ -164,6 +204,7 @@ function Declension1() {
     <section
       className={`screen conjugation-screen ${status}`}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       <button type="button" className="back-btn" onClick={() => navigate('/')}>
