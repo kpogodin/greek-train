@@ -14,6 +14,9 @@ function Menu() {
         <button type="button" className="menu-btn" onClick={() => navigate('/declension-1')}>
           Спряжение 1 (Α΄ Συζυγία)
         </button>
+        <button type="button" className="menu-btn" onClick={() => navigate('/small-talk')}>
+          Small Talk (Κουβεντούλα)
+        </button>
       </div>
     </section>
   )

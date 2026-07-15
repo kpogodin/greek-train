@@ -490,3 +490,50 @@ body,
   border-color: var(--accent);
   color: #fff;
 }
+
+.smalltalk-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 420px;
+  width: 100%;
+  touch-action: pan-y;
+  will-change: transform;
+}
+
+.smalltalk-prompt {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.smalltalk-variants {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.smalltalk-variant {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+
+.smalltalk-phrase {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.smalltalk-pronunciation {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.smalltalk-translation {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}

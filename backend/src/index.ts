@@ -107,6 +107,43 @@ app.get('/words/random', async (req, res) => {
   res.json(word)
 })
 
+app.get('/smalltalk/random', async (req, res) => {
+  const excludeId = req.query.exclude ? Number(req.query.exclude) : undefined
+  const where: { id?: { not: number } } = {}
+  if (excludeId) where.id = { not: excludeId }
+
+  const count = await prisma.smallTalkPrompt.count({ where })
+  if (count === 0) {
+    const prompt = await prisma.smallTalkPrompt.findFirst({ include: { variants: true } })
+    res.json(prompt ?? null)
+    return
+  }
+
+  const skip = Math.floor(Math.random() * count)
+  const prompt = await prisma.smallTalkPrompt.findFirst({
+    where,
+    skip,
+    include: { variants: true },
+  })
+  res.json(prompt)
+})
+
+app.post('/progress/smalltalk', async (req, res) => {
+  const learnerName = typeof req.body.learnerName === 'string' ? req.body.learnerName.trim() : ''
+  const promptId = Number(req.body.promptId)
+  if (!learnerName || !promptId) {
+    res.status(400).json({ error: 'learnerName and promptId are required' })
+    return
+  }
+
+  await prisma.smallTalkProgress.upsert({
+    where: { learnerName_promptId: { learnerName, promptId } },
+    create: { learnerName, promptId, timesKnown: 1 },
+    update: { timesKnown: { increment: 1 } },
+  })
+  res.json({ ok: true })
+})
+
 app.get('/conjugation/random', async (req, res) => {
   const group = Number(req.query.group ?? 1)
   const excludeId = req.query.exclude ? Number(req.query.exclude) : undefined

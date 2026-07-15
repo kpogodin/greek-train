@@ -63,3 +63,33 @@ model ConjugationProgress {
   @@unique([learnerName, sentenceId])
   @@index([learnerName])
 }
+
+model SmallTalkPrompt {
+  id        Int                @id @default(autoincrement())
+  promptRu  String
+  variants  SmallTalkVariant[]
+  createdAt DateTime           @default(now())
+}
+
+model SmallTalkVariant {
+  id            Int             @id @default(autoincrement())
+  prompt        SmallTalkPrompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  promptId      Int
+  phraseGreek   String
+  translationRu String
+  pronunciation String
+
+  @@index([promptId])
+}
+
+model SmallTalkProgress {
+  id          Int      @id @default(autoincrement())
+  learnerName String
+  promptId    Int
+  timesKnown  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([learnerName, promptId])
+  @@index([learnerName])
+}

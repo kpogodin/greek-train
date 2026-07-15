@@ -3,6 +3,7 @@ import Menu from './pages/Menu'
 import CategoryPicker from './pages/CategoryPicker'
 import Home from './pages/Home'
 import Declension1 from './pages/Declension1'
+import SmallTalk from './pages/SmallTalk'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/words" element={<CategoryPicker />} />
         <Route path="/words/practice" element={<Home />} />
         <Route path="/declension-1" element={<Declension1 />} />
+        <Route path="/small-talk" element={<SmallTalk />} />
       </Routes>
     </BrowserRouter>
   )
