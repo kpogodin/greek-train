@@ -154,6 +154,18 @@ body,
   flex-shrink: 0;
 }
 
+.category-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.category-progress {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
 .back-btn {
   position: fixed;
   top: 16px;
@@ -232,6 +244,52 @@ body,
   color: var(--accent);
   font-weight: 600;
   padding-right: 0;
+}
+
+.learner-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.learner-popover {
+  position: fixed;
+  top: 52px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  width: 200px;
+}
+
+.learner-current {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.learner-input {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
 }
 
 .conjugation-exercise {

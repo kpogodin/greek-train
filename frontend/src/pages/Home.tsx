@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
+import { getLearnerName } from '../learner'
 
 interface WordForm {
   id: number
@@ -41,6 +42,10 @@ function Home() {
           }
           setEmpty(false)
           setWord(res.data)
+          const learnerName = getLearnerName()
+          if (learnerName && res.data) {
+            api.post('/progress/word', { learnerName, wordId: res.data.id }).catch(() => {})
+          }
         })
         .catch(() => setError(true))
     },

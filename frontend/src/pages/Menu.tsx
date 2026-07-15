@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom'
+import LearnerBadge from '../components/LearnerBadge'
 
 function Menu() {
   const navigate = useNavigate()
 
   return (
     <section className="screen">
+      <LearnerBadge />
       <div className="menu">
         <button type="button" className="menu-btn" onClick={() => navigate('/words')}>
           Слова

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import { getLearnerName } from '../learner'
 
 interface CategoryCount {
   category: string
   count: number
+  learned: number
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -40,8 +42,11 @@ function CategoryPicker() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
+    const learnerName = getLearnerName()
     api
-      .get<CategoryCount[]>('/words/categories')
+      .get<CategoryCount[]>('/words/categories', {
+        params: learnerName ? { learner: learnerName } : {},
+      })
       .then((res) => setCategories(res.data))
       .catch(() => setError(true))
   }, [])
@@ -72,7 +77,12 @@ function CategoryPicker() {
             className="menu-btn category-btn"
             onClick={() => goToPractice(prepositions.category)}
           >
-            Базовые предлоги
+            <span className="category-label">
+              Базовые предлоги
+              <span className="category-progress">
+                {prepositions.learned}/{prepositions.count}
+              </span>
+            </span>
             <span className="category-icon">{CATEGORY_ICONS[prepositions.category] ?? '🔤'}</span>
           </button>
         )}
@@ -84,7 +94,12 @@ function CategoryPicker() {
             className="menu-btn category-btn"
             onClick={() => goToPractice(c.category)}
           >
-            {c.category}
+            <span className="category-label">
+              {c.category}
+              <span className="category-progress">
+                {c.learned}/{c.count}
+              </span>
+            </span>
             <span className="category-icon">{CATEGORY_ICONS[c.category] ?? '📘'}</span>
           </button>
         ))}

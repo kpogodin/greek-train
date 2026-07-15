@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import { getLearnerName } from '../learner'
 
 interface ConjugationSentence {
   id: number
@@ -59,7 +60,13 @@ function Declension1() {
   const check = useCallback(() => {
     if (!sentence) return
     const normalize = (s: string) => s.trim().toLowerCase().normalize('NFC')
-    setStatus(normalize(answer) === normalize(sentence.correctAnswer) ? 'correct' : 'incorrect')
+    const isCorrect = normalize(answer) === normalize(sentence.correctAnswer)
+    setStatus(isCorrect ? 'correct' : 'incorrect')
+
+    const learnerName = getLearnerName()
+    if (isCorrect && learnerName) {
+      api.post('/progress/conjugation', { learnerName, sentenceId: sentence.id }).catch(() => {})
+    }
   }, [answer, sentence])
 
   const next = useCallback(() => {

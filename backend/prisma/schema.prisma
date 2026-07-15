@@ -39,3 +39,27 @@ model ConjugationSentence {
 
   @@index([group])
 }
+
+model WordProgress {
+  id          Int      @id @default(autoincrement())
+  learnerName String
+  wordId      Int
+  timesSeen   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([learnerName, wordId])
+  @@index([learnerName])
+}
+
+model ConjugationProgress {
+  id           Int      @id @default(autoincrement())
+  learnerName  String
+  sentenceId   Int
+  timesCorrect Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([learnerName, sentenceId])
+  @@index([learnerName])
+}

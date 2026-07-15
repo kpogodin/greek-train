@@ -16,16 +16,73 @@ app.get('/words', async (_req, res) => {
   res.json(words)
 })
 
-app.get('/words/categories', async (_req, res) => {
+app.get('/words/categories', async (req, res) => {
+  const learnerName = typeof req.query.learner === 'string' ? req.query.learner.trim() : undefined
+
   const grouped = await prisma.word.groupBy({
     by: ['category'],
     _count: { category: true },
   })
   const categories = grouped
     .filter((g) => g.category)
-    .map((g) => ({ category: g.category as string, count: g._count.category }))
+    .map((g) => ({ category: g.category as string, count: g._count.category, learned: 0 }))
     .sort((a, b) => b.count - a.count)
+
+  if (learnerName) {
+    const progress = await prisma.wordProgress.findMany({
+      where: { learnerName },
+      select: { wordId: true },
+    })
+    const wordIds = progress.map((p) => p.wordId)
+    if (wordIds.length > 0) {
+      const learnedWords = await prisma.word.findMany({
+        where: { id: { in: wordIds } },
+        select: { category: true },
+      })
+      const learnedByCategory = new Map<string, number>()
+      for (const w of learnedWords) {
+        if (!w.category) continue
+        learnedByCategory.set(w.category, (learnedByCategory.get(w.category) ?? 0) + 1)
+      }
+      for (const c of categories) {
+        c.learned = learnedByCategory.get(c.category) ?? 0
+      }
+    }
+  }
+
   res.json(categories)
+})
+
+app.post('/progress/word', async (req, res) => {
+  const learnerName = typeof req.body.learnerName === 'string' ? req.body.learnerName.trim() : ''
+  const wordId = Number(req.body.wordId)
+  if (!learnerName || !wordId) {
+    res.status(400).json({ error: 'learnerName and wordId are required' })
+    return
+  }
+
+  await prisma.wordProgress.upsert({
+    where: { learnerName_wordId: { learnerName, wordId } },
+    create: { learnerName, wordId, timesSeen: 1 },
+    update: { timesSeen: { increment: 1 } },
+  })
+  res.json({ ok: true })
+})
+
+app.post('/progress/conjugation', async (req, res) => {
+  const learnerName = typeof req.body.learnerName === 'string' ? req.body.learnerName.trim() : ''
+  const sentenceId = Number(req.body.sentenceId)
+  if (!learnerName || !sentenceId) {
+    res.status(400).json({ error: 'learnerName and sentenceId are required' })
+    return
+  }
+
+  await prisma.conjugationProgress.upsert({
+    where: { learnerName_sentenceId: { learnerName, sentenceId } },
+    create: { learnerName, sentenceId, timesCorrect: 1 },
+    update: { timesCorrect: { increment: 1 } },
+  })
+  res.json({ ok: true })
 })
 
 app.get('/words/random', async (req, res) => {
