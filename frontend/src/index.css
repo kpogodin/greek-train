@@ -280,6 +280,12 @@ body,
   color: var(--text-muted);
 }
 
+.conjugation-pronunciation {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
 .bottom-bar {
   position: fixed;
   bottom: 20px;

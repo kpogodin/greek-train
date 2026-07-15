@@ -9,6 +9,7 @@ interface ConjugationSentence {
   correctAnswer: string
   verbLemma: string
   translationRu: string
+  pronunciation: string
 }
 
 type Status = 'idle' | 'correct' | 'incorrect'
@@ -96,6 +97,9 @@ function Declension1() {
         </div>
         <div className="verb-hint">({sentence.verbLemma})</div>
         <div className="conjugation-translation">{sentence.translationRu}</div>
+        {status === 'correct' && (
+          <div className="conjugation-pronunciation">{sentence.pronunciation}</div>
+        )}
       </div>
     )
   }

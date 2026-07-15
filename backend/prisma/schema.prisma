@@ -34,6 +34,7 @@ model ConjugationSentence {
   correctAnswer String
   verbLemma     String
   translationRu String
+  pronunciation String   @default("")
   createdAt     DateTime @default(now())
 
   @@index([group])

@@ -3,7 +3,7 @@ import { createReadStream } from 'node:fs'
 import { parse } from 'csv-parse'
 import { prisma } from './prisma.js'
 
-// Expected CSV columns: before, after, correct_answer, verb_lemma, translation_ru
+// Expected CSV columns: before, after, correct_answer, verb_lemma, translation_ru, pronunciation_ru
 async function importConjugation(filePath: string, group: number) {
   const parser = createReadStream(filePath).pipe(
     parse({ columns: true, skip_empty_lines: true }),
@@ -19,6 +19,7 @@ async function importConjugation(filePath: string, group: number) {
         correctAnswer: row.correct_answer ?? '',
         verbLemma: row.verb_lemma ?? '',
         translationRu: row.translation_ru ?? '',
+        pronunciation: row.pronunciation_ru ?? '',
       },
     })
     count++
