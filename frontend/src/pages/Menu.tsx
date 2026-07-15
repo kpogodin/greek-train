@@ -9,10 +9,10 @@ function Menu() {
       <LearnerBadge />
       <div className="menu">
         <button type="button" className="menu-btn" onClick={() => navigate('/words')}>
-          Слова
+          Слова (Λέξεις)
         </button>
         <button type="button" className="menu-btn" onClick={() => navigate('/declension-1')}>
-          Спряжение 1
+          Спряжение 1 (Α΄ Συζυγία)
         </button>
       </div>
     </section>
