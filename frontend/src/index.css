@@ -98,36 +98,9 @@ body,
   margin-top: 8px;
 }
 
-.difficulty-bar {
-  position: fixed;
-  top: 16px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  cursor: default;
-  pointer-events: none;
-}
-
-.difficulty-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 14px;
-  font-family: inherit;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  pointer-events: auto;
-}
-
-.difficulty-btn.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+.category-screen {
+  justify-content: flex-start;
+  padding-top: 64px;
 }
 
 .menu {
@@ -155,6 +128,30 @@ body,
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
+}
+
+.category-menu {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-width: 420px;
+  width: 100%;
+}
+
+.category-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+  font-size: 13px;
+  padding: 10px 12px;
+  line-height: 1.25;
+}
+
+.category-icon {
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .back-btn {

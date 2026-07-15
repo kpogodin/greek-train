@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 
 interface WordForm {
@@ -16,14 +16,13 @@ interface Word {
   forms: WordForm[]
 }
 
-const DIFFICULTIES = [1, 2, 3, 4, 5]
-
 function Home() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const category = searchParams.get('category') ?? undefined
   const [word, setWord] = useState<Word | null>(null)
   const [error, setError] = useState(false)
   const [empty, setEmpty] = useState(false)
-  const [difficulty, setDifficulty] = useState<number | null>(null)
 
   const fetchWord = useCallback(
     (excludeId?: number) => {
@@ -32,7 +31,7 @@ function Home() {
         .get<Word | null>('/words/random', {
           params: {
             ...(excludeId ? { exclude: excludeId } : {}),
-            ...(difficulty ? { difficulty } : {}),
+            ...(category ? { category } : {}),
           },
         })
         .then((res) => {
@@ -45,7 +44,7 @@ function Home() {
         })
         .catch(() => setError(true))
     },
-    [difficulty],
+    [category],
   )
 
   useEffect(() => {
@@ -57,10 +56,6 @@ function Home() {
     fetchWord(word?.id)
   }, [fetchWord, word])
 
-  const selectDifficulty = useCallback((d: number) => {
-    setDifficulty((current) => (current === d ? null : d))
-  }, [])
-
   let content
   if (error) {
     content = <p className="status">Не удалось загрузить слова.</p>
@@ -71,11 +66,7 @@ function Home() {
   } else {
     content = (
       <div className="word-display">
-        {word.category && (
-          <div className="word-category">
-            {word.category} (сложность {word.difficulty})
-          </div>
-        )}
+        {word.category && <div className="word-category">{word.category}</div>}
         <div className="word-forms">
           {word.forms.map((f) => (
             <div key={f.id}>{f.form}</div>
@@ -96,23 +87,11 @@ function Home() {
         className="back-btn"
         onClick={(e) => {
           e.stopPropagation()
-          navigate('/')
+          navigate('/words')
         }}
       >
-        ← Меню
+        ← Категории
       </button>
-      <div className="difficulty-bar" onClick={(e) => e.stopPropagation()}>
-        {DIFFICULTIES.map((d) => (
-          <button
-            key={d}
-            type="button"
-            className={`difficulty-btn${difficulty === d ? ' active' : ''}`}
-            onClick={() => selectDifficulty(d)}
-          >
-            {d}
-          </button>
-        ))}
-      </div>
       {content}
       {word && !error && !empty && <p className="hint">Тапни, чтобы увидеть другое слово</p>}
     </section>

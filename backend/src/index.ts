@@ -16,14 +16,26 @@ app.get('/words', async (_req, res) => {
   res.json(words)
 })
 
+app.get('/words/categories', async (_req, res) => {
+  const grouped = await prisma.word.groupBy({
+    by: ['category'],
+    _count: { category: true },
+  })
+  const categories = grouped
+    .filter((g) => g.category)
+    .map((g) => ({ category: g.category as string, count: g._count.category }))
+    .sort((a, b) => b.count - a.count)
+  res.json(categories)
+})
+
 app.get('/words/random', async (req, res) => {
   const excludeId = req.query.exclude ? Number(req.query.exclude) : undefined
-  const difficulty = req.query.difficulty ? Number(req.query.difficulty) : undefined
+  const category = typeof req.query.category === 'string' ? req.query.category : undefined
 
-  const baseWhere: { difficulty?: number } = {}
-  if (difficulty) baseWhere.difficulty = difficulty
+  const baseWhere: { category?: string } = {}
+  if (category) baseWhere.category = category
 
-  const where: { id?: { not: number }; difficulty?: number } = { ...baseWhere }
+  const where: { id?: { not: number }; category?: string } = { ...baseWhere }
   if (excludeId) where.id = { not: excludeId }
 
   const count = await prisma.word.count({ where })
