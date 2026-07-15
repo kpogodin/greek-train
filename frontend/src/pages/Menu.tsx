@@ -12,7 +12,7 @@ function Menu() {
           Слова
         </button>
         <button type="button" className="menu-btn" onClick={() => navigate('/declension-1')}>
-          Склонение 1
+          Спряжение 1
         </button>
       </div>
     </section>
