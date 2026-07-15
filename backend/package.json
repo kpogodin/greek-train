@@ -9,6 +9,7 @@
     "start": "node dist/index.js",
     "import-csv": "tsx src/importCsv.ts",
     "import-conjugation": "tsx src/importConjugation.ts",
+    "patch-cheat-sheet": "tsx src/patchCheatSheet.ts",
     "assign-difficulty": "tsx src/assignDifficulty.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
