@@ -31,8 +31,7 @@ function Home() {
   const [error, setError] = useState(false)
   const [empty, setEmpty] = useState(false)
   const [hideHints, setHideHintsState] = useState(getHideHints)
-  const [revealedPron, setRevealedPron] = useState(false)
-  const [revealedTranslation, setRevealedTranslation] = useState(false)
+  const [revealed, setRevealed] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const screenRef = useRef<HTMLElement>(null)
   const touchStart = useRef<{ x: number; y: number; onSpoiler: boolean; dragging: boolean } | null>(
@@ -79,8 +78,7 @@ function Home() {
           }
           setEmpty(false)
           setWord(res.data)
-          setRevealedPron(false)
-          setRevealedTranslation(false)
+          setRevealed(false)
           resetCardStyle(false)
         })
         .catch(() => setError(true))
@@ -92,10 +90,6 @@ function Home() {
     fetchWord(word?.id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchWord])
-
-  const shuffle = useCallback(() => {
-    fetchWord(word?.id)
-  }, [fetchWord, word])
 
   const markKnown = useCallback(() => {
     if (!word) return
@@ -121,7 +115,8 @@ function Home() {
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0]
-    const onSpoiler = (e.target as HTMLElement).closest('.spoiler-block, .hide-hints-toggle') !== null
+    const onSpoiler =
+      (e.target as HTMLElement).closest('.word-hints.blurred, .hide-hints-toggle') !== null
     touchStart.current = { x: touch.clientX, y: touch.clientY, onSpoiler, dragging: false }
     if (cardRef.current) cardRef.current.style.transition = 'none'
     if (screenRef.current) screenRef.current.style.transition = 'none'
@@ -180,8 +175,7 @@ function Home() {
   } else if (!word) {
     content = <p className="status">Загрузка…</p>
   } else {
-    const showPron = !hideHints || revealedPron
-    const showTranslation = !hideHints || revealedTranslation
+    const blurred = hideHints && !revealed
     content = (
       <div className="word-display" ref={cardRef}>
         {word.category && <div className="word-category">{word.category}</div>}
@@ -190,29 +184,17 @@ function Home() {
             <div key={f.id}>{f.form}</div>
           ))}
         </div>
-        {word.pronunciation &&
-          (showPron ? (
+        <div
+          className={`word-hints${blurred ? ' blurred' : ''}`}
+          onClick={() => {
+            if (blurred) setRevealed(true)
+          }}
+        >
+          {word.pronunciation && (
             <div className="word-pronunciation">{word.pronunciation}</div>
-          ) : (
-            <div
-              className="spoiler-block spoiler-pronunciation"
-              onClick={(e) => {
-                e.stopPropagation()
-                setRevealedPron(true)
-              }}
-            />
-          ))}
-        {showTranslation ? (
+          )}
           <div className="word-translation">{word.translationRu}</div>
-        ) : (
-          <div
-            className="spoiler-block spoiler-translation"
-            onClick={(e) => {
-              e.stopPropagation()
-              setRevealedTranslation(true)
-            }}
-          />
-        )}
+        </div>
         <p className="swipe-hint">← Не знаю · Знаю →</p>
       </div>
     )
@@ -222,53 +204,38 @@ function Home() {
     <section
       className="screen word-screen"
       ref={screenRef}
-      onClick={shuffle}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <button
-        type="button"
-        className="back-btn"
-        onClick={(e) => {
-          e.stopPropagation()
-          navigate('/words')
-        }}
-      >
+      <button type="button" className="back-btn" onClick={() => navigate('/words')}>
         ← Категории
       </button>
       <button
         type="button"
         className={`hide-hints-toggle${hideHints ? ' active' : ''}`}
-        onClick={(e) => {
-          e.stopPropagation()
-          toggleHideHints()
-        }}
+        onClick={toggleHideHints}
       >
         {hideHints ? '🙈 Подсказки скрыты' : '👁 Подсказки видны'}
       </button>
       {content}
       {word && !error && !empty && (
-        <div className="bottom-bar">
+        <div className="tinder-controls">
           <button
             type="button"
-            className="action-btn"
-            onClick={(e) => {
-              e.stopPropagation()
-              markUnknown()
-            }}
+            className="tinder-btn tinder-btn-no"
+            aria-label="Не знаю"
+            onClick={markUnknown}
           >
-            ✕ Не знаю
+            ✕
           </button>
           <button
             type="button"
-            className="action-btn"
-            onClick={(e) => {
-              e.stopPropagation()
-              markKnown()
-            }}
+            className="tinder-btn tinder-btn-yes"
+            aria-label="Знаю"
+            onClick={markKnown}
           >
-            ✓ Знаю
+            ✓
           </button>
         </div>
       )}
