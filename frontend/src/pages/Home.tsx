@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
 interface WordForm {
@@ -18,6 +19,7 @@ interface Word {
 const DIFFICULTIES = [1, 2, 3, 4, 5]
 
 function Home() {
+  const navigate = useNavigate()
   const [word, setWord] = useState<Word | null>(null)
   const [error, setError] = useState(false)
   const [empty, setEmpty] = useState(false)
@@ -89,6 +91,16 @@ function Home() {
 
   return (
     <section className="screen" onClick={shuffle}>
+      <button
+        type="button"
+        className="back-btn"
+        onClick={(e) => {
+          e.stopPropagation()
+          navigate('/')
+        }}
+      >
+        ← Меню
+      </button>
       <div className="difficulty-bar" onClick={(e) => e.stopPropagation()}>
         {DIFFICULTIES.map((d) => (
           <button
