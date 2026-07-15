@@ -114,7 +114,9 @@ app.get('/smalltalk/random', async (req, res) => {
 
   const count = await prisma.smallTalkPrompt.count({ where })
   if (count === 0) {
-    const prompt = await prisma.smallTalkPrompt.findFirst({ include: { variants: true } })
+    const prompt = await prisma.smallTalkPrompt.findFirst({
+      include: { variants: { orderBy: { order: 'asc' } } },
+    })
     res.json(prompt ?? null)
     return
   }
@@ -123,7 +125,7 @@ app.get('/smalltalk/random', async (req, res) => {
   const prompt = await prisma.smallTalkPrompt.findFirst({
     where,
     skip,
-    include: { variants: true },
+    include: { variants: { orderBy: { order: 'asc' } } },
   })
   res.json(prompt)
 })

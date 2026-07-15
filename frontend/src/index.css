@@ -507,33 +507,60 @@ body,
   font-weight: 700;
 }
 
-.smalltalk-variants {
+.smalltalk-dialogue {
   display: flex;
   flex-direction: column;
   gap: 14px;
   width: 100%;
 }
 
-.smalltalk-variant {
+.smalltalk-bubble-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.smalltalk-bubble-row.you {
+  align-items: flex-end;
+}
+
+.smalltalk-speaker-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  padding: 0 4px;
+}
+
+.smalltalk-bubble {
+  max-width: 85%;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 10px 16px;
+  text-align: left;
+  background: var(--bg);
+}
+
+.smalltalk-bubble-row.you .smalltalk-bubble {
+  background: color-mix(in srgb, var(--accent) 10%, var(--bg));
+  border-color: var(--accent);
 }
 
 .smalltalk-phrase {
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 700;
 }
 
 .smalltalk-pronunciation {
-  font-size: 14px;
+  font-size: 13px;
   font-style: italic;
   color: var(--text-muted);
   margin-top: 2px;
 }
 
 .smalltalk-translation {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-muted);
   margin-top: 4px;
 }

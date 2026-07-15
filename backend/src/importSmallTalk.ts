@@ -3,8 +3,10 @@ import { createReadStream } from 'node:fs'
 import { parse } from 'csv-parse'
 import { prisma } from './prisma.js'
 
-// Expected CSV columns: prompt_ru, phrase_greek, translation_ru, pronunciation_ru
-// Rows sharing the same prompt_ru are grouped into one SmallTalkPrompt.
+// Expected CSV columns: prompt_ru, order, speaker, phrase_greek, translation_ru, pronunciation_ru
+// Rows sharing the same prompt_ru are grouped into one SmallTalkPrompt (a dialogue),
+// with each row being one line of the dialogue in `order`, spoken by `speaker`
+// ("them" or "you").
 async function importSmallTalk(filePath: string) {
   const parser = createReadStream(filePath).pipe(
     parse({ columns: true, skip_empty_lines: true }),
@@ -27,6 +29,8 @@ async function importSmallTalk(filePath: string) {
     await prisma.smallTalkVariant.create({
       data: {
         promptId,
+        order: Number(row.order ?? 0),
+        speaker: row.speaker ?? 'them',
         phraseGreek: row.phrase_greek ?? '',
         translationRu: row.translation_ru ?? '',
         pronunciation: row.pronunciation_ru ?? '',

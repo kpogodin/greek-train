@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { getLearnerName } from '../learner'
 
-interface SmallTalkVariant {
+interface SmallTalkLine {
   id: number
+  order: number
+  speaker: 'them' | 'you'
   phraseGreek: string
   translationRu: string
   pronunciation: string
@@ -13,7 +15,7 @@ interface SmallTalkVariant {
 interface SmallTalkPrompt {
   id: number
   promptRu: string
-  variants: SmallTalkVariant[]
+  variants: SmallTalkLine[]
 }
 
 const SWIPE_MIN_DISTANCE = 60
@@ -153,12 +155,17 @@ function SmallTalk() {
     content = (
       <div className="smalltalk-card" ref={cardRef}>
         <div className="smalltalk-prompt">{prompt.promptRu}</div>
-        <div className="smalltalk-variants">
+        <div className="smalltalk-dialogue">
           {prompt.variants.map((v) => (
-            <div key={v.id} className="smalltalk-variant">
-              <div className="smalltalk-phrase">{v.phraseGreek}</div>
-              <div className="smalltalk-pronunciation">{v.pronunciation}</div>
-              <div className="smalltalk-translation">{v.translationRu}</div>
+            <div key={v.id} className={`smalltalk-bubble-row ${v.speaker}`}>
+              <span className="smalltalk-speaker-label">
+                {v.speaker === 'you' ? 'Ты' : 'Собеседник'}
+              </span>
+              <div className="smalltalk-bubble">
+                <div className="smalltalk-phrase">{v.phraseGreek}</div>
+                <div className="smalltalk-pronunciation">{v.pronunciation}</div>
+                <div className="smalltalk-translation">{v.translationRu}</div>
+              </div>
             </div>
           ))}
         </div>

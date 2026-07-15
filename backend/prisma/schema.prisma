@@ -75,6 +75,8 @@ model SmallTalkVariant {
   id            Int             @id @default(autoincrement())
   prompt        SmallTalkPrompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
   promptId      Int
+  order         Int             @default(0)
+  speaker       String          @default("them")
   phraseGreek   String
   translationRu String
   pronunciation String
