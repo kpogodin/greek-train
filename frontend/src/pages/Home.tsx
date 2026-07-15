@@ -115,8 +115,7 @@ function Home() {
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0]
-    const onSpoiler =
-      (e.target as HTMLElement).closest('.word-hints.blurred, .hide-hints-toggle') !== null
+    const onSpoiler = (e.target as HTMLElement).closest('.word-hints, .hide-hints-toggle') !== null
     touchStart.current = { x: touch.clientX, y: touch.clientY, onSpoiler, dragging: false }
     if (cardRef.current) cardRef.current.style.transition = 'none'
     if (screenRef.current) screenRef.current.style.transition = 'none'
@@ -178,22 +177,35 @@ function Home() {
     const blurred = hideHints && !revealed
     content = (
       <div className="word-display" ref={cardRef}>
-        {word.category && <div className="word-category">{word.category}</div>}
         <div className="word-forms">
           {word.forms.map((f) => (
             <div key={f.id}>{f.form}</div>
           ))}
         </div>
         <div
-          className={`word-hints${blurred ? ' blurred' : ''}`}
+          className="word-hints"
           onClick={() => {
             if (blurred) setRevealed(true)
           }}
         >
           {word.pronunciation && (
-            <div className="word-pronunciation">{word.pronunciation}</div>
+            <div className="hint-row">
+              <span className="hint-icon" aria-label="Произношение">
+                🗣️
+              </span>
+              <span className={`word-pronunciation${blurred ? ' blurred-text' : ''}`}>
+                {word.pronunciation}
+              </span>
+            </div>
           )}
-          <div className="word-translation">{word.translationRu}</div>
+          <div className="hint-row">
+            <span className="hint-icon" aria-label="Перевод">
+              🌐
+            </span>
+            <span className={`word-translation${blurred ? ' blurred-text' : ''}`}>
+              {word.translationRu}
+            </span>
+          </div>
         </div>
         <p className="swipe-hint">← Не знаю · Знаю →</p>
       </div>
@@ -211,12 +223,13 @@ function Home() {
       <button type="button" className="back-btn" onClick={() => navigate('/words')}>
         ← Категории
       </button>
+      {word?.category && <div className="word-category-badge">{word.category}</div>}
       <button
         type="button"
         className={`hide-hints-toggle${hideHints ? ' active' : ''}`}
         onClick={toggleHideHints}
       >
-        {hideHints ? '🙈 Подсказки скрыты' : '👁 Подсказки видны'}
+        {hideHints ? '🙈' : '👁'} Подсказки
       </button>
       {content}
       {word && !error && !empty && (
