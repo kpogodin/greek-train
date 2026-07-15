@@ -19,6 +19,9 @@ interface Word {
 }
 
 const SWIPE_MIN_DISTANCE = 60
+const SWIPE_MAX_TINT_DISTANCE = 200
+const KNOW_COLOR = '#22c55e'
+const UNKNOWN_COLOR = '#ef4444'
 
 function Home() {
   const navigate = useNavigate()
@@ -30,18 +33,33 @@ function Home() {
   const [hideHints, setHideHintsState] = useState(getHideHints)
   const [revealedPron, setRevealedPron] = useState(false)
   const [revealedTranslation, setRevealedTranslation] = useState(false)
-  const [dragDirection, setDragDirection] = useState<'left' | 'right' | null>(null)
   const cardRef = useRef<HTMLDivElement>(null)
+  const screenRef = useRef<HTMLElement>(null)
   const touchStart = useRef<{ x: number; y: number; onSpoiler: boolean; dragging: boolean } | null>(
     null,
   )
 
   const resetCardStyle = useCallback((animated: boolean) => {
     const card = cardRef.current
-    if (!card) return
-    card.style.transition = animated ? 'transform 0.2s ease, opacity 0.2s ease' : 'none'
-    card.style.transform = 'translateX(0)'
-    card.style.opacity = '1'
+    if (card) {
+      card.style.transition = animated ? 'transform 0.2s ease, opacity 0.2s ease' : 'none'
+      card.style.transform = 'translateX(0)'
+      card.style.opacity = '1'
+    }
+    const screen = screenRef.current
+    if (screen) {
+      screen.style.transition = animated ? 'background-color 0.2s ease' : 'none'
+      screen.style.backgroundColor = ''
+    }
+  }, [])
+
+  const applyDragTint = useCallback((deltaX: number) => {
+    const screen = screenRef.current
+    if (!screen) return
+    const intensity = Math.min(Math.abs(deltaX) / SWIPE_MAX_TINT_DISTANCE, 1)
+    const color = deltaX > 0 ? KNOW_COLOR : UNKNOWN_COLOR
+    screen.style.transition = 'none'
+    screen.style.backgroundColor = `color-mix(in srgb, ${color} ${Math.round(intensity * 45)}%, var(--bg))`
   }, [])
 
   const fetchWord = useCallback(
@@ -106,6 +124,7 @@ function Home() {
     const onSpoiler = (e.target as HTMLElement).closest('.spoiler-block, .hide-hints-toggle') !== null
     touchStart.current = { x: touch.clientX, y: touch.clientY, onSpoiler, dragging: false }
     if (cardRef.current) cardRef.current.style.transition = 'none'
+    if (screenRef.current) screenRef.current.style.transition = 'none'
   }, [])
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
@@ -120,14 +139,13 @@ function Home() {
     start.dragging = true
     card.style.transform = `translateX(${deltaX}px) rotate(${deltaX / 20}deg)`
     card.style.opacity = `${Math.max(0.4, 1 - Math.abs(deltaX) / 300)}`
-    setDragDirection(deltaX > 0 ? 'right' : 'left')
-  }, [])
+    applyDragTint(deltaX)
+  }, [applyDragTint])
 
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent) => {
       const start = touchStart.current
       touchStart.current = null
-      setDragDirection(null)
       if (!start || start.onSpoiler || !word) return
       const card = cardRef.current
       const touch = e.changedTouches[0]
@@ -139,17 +157,19 @@ function Home() {
         card.style.transition = 'transform 0.15s ease, opacity 0.15s ease'
         card.style.transform = 'translateX(120%) rotate(15deg)'
         card.style.opacity = '0'
+        applyDragTint(SWIPE_MAX_TINT_DISTANCE)
         window.setTimeout(() => markKnown(), 150)
       } else if (isHorizontal && deltaX < -SWIPE_MIN_DISTANCE && card) {
         card.style.transition = 'transform 0.15s ease, opacity 0.15s ease'
         card.style.transform = 'translateX(-120%) rotate(-15deg)'
         card.style.opacity = '0'
+        applyDragTint(-SWIPE_MAX_TINT_DISTANCE)
         window.setTimeout(() => markUnknown(), 150)
       } else if (card) {
         resetCardStyle(true)
       }
     },
-    [word, markKnown, markUnknown, resetCardStyle],
+    [word, markKnown, markUnknown, resetCardStyle, applyDragTint],
   )
 
   let content
@@ -200,7 +220,8 @@ function Home() {
 
   return (
     <section
-      className={`screen word-screen ${dragDirection ? `drag-${dragDirection}` : ''}`}
+      className="screen word-screen"
+      ref={screenRef}
       onClick={shuffle}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}

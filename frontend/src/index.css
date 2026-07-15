@@ -73,18 +73,6 @@ body,
   will-change: transform;
 }
 
-.word-screen {
-  transition: background-color 0.15s ease;
-}
-
-.word-screen.drag-right {
-  background-color: color-mix(in srgb, #22c55e 14%, var(--bg));
-}
-
-.word-screen.drag-left {
-  background-color: color-mix(in srgb, #ef4444 14%, var(--bg));
-}
-
 .hide-hints-toggle {
   position: fixed;
   top: 16px;
