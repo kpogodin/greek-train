@@ -107,6 +107,7 @@ body,
   justify-content: center;
   gap: 8px;
   cursor: default;
+  pointer-events: none;
 }
 
 .difficulty-btn {
@@ -120,6 +121,7 @@ body,
   font-family: inherit;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  pointer-events: auto;
 }
 
 .difficulty-btn.active {
