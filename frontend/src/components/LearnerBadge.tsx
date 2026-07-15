@@ -22,25 +22,28 @@ function LearnerBadge() {
         👤
       </button>
       {open && (
-        <div className="learner-popover">
-          <p className="learner-current">
-            {current ? `Сейчас: ${current}` : 'Имя не задано'}
-          </p>
-          <input
-            type="text"
-            className="learner-input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') save()
-            }}
-            placeholder="Твоё имя"
-            autoFocus
-          />
-          <button type="button" className="action-btn" onClick={save}>
-            Сохранить
-          </button>
-        </div>
+        <>
+          <div className="learner-backdrop" onClick={() => setOpen(false)} />
+          <div className="learner-popover">
+            <p className="learner-current">
+              {current ? `Сейчас: ${current}` : 'Имя не задано'}
+            </p>
+            <input
+              type="text"
+              className="learner-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') save()
+              }}
+              placeholder="Твоё имя"
+              autoFocus
+            />
+            <button type="button" className="action-btn" onClick={save}>
+              Сохранить
+            </button>
+          </div>
+        </>
       )}
     </>
   )
