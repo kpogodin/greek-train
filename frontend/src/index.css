@@ -180,3 +180,131 @@ body,
   margin: 0;
   pointer-events: none;
 }
+
+.conjugation-screen {
+  transition: background-color 0.2s ease;
+}
+
+.conjugation-screen.correct {
+  background-color: color-mix(in srgb, #22c55e 18%, var(--bg));
+}
+
+.conjugation-screen.incorrect {
+  background-color: color-mix(in srgb, #ef4444 18%, var(--bg));
+}
+
+.hint-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hint-popover {
+  position: fixed;
+  top: 52px;
+  right: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.hint-popover table {
+  border-collapse: collapse;
+}
+
+.hint-popover td {
+  padding: 2px 8px 2px 0;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.hint-popover td:last-child {
+  color: var(--accent);
+  font-weight: 600;
+  padding-right: 0;
+}
+
+.conjugation-exercise {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 480px;
+}
+
+.conjugation-sentence {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.conjugation-input {
+  width: 140px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 22px;
+  text-align: center;
+  border: none;
+  border-bottom: 2px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  padding: 0 4px;
+}
+
+.conjugation-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.verb-hint {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.conjugation-translation {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.action-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.action-btn:active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}

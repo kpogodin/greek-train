@@ -25,3 +25,16 @@ model WordForm {
 
   @@index([wordId])
 }
+
+model ConjugationSentence {
+  id            Int      @id @default(autoincrement())
+  group         Int      @default(1)
+  before        String
+  after         String
+  correctAnswer String
+  verbLemma     String
+  translationRu String
+  createdAt     DateTime @default(now())
+
+  @@index([group])
+}

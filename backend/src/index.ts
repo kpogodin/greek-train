@@ -38,6 +38,25 @@ app.get('/words/random', async (req, res) => {
   res.json(word)
 })
 
+app.get('/conjugation/random', async (req, res) => {
+  const group = Number(req.query.group ?? 1)
+  const excludeId = req.query.exclude ? Number(req.query.exclude) : undefined
+
+  const where: { group: number; id?: { not: number } } = { group }
+  if (excludeId) where.id = { not: excludeId }
+
+  const count = await prisma.conjugationSentence.count({ where })
+  if (count === 0) {
+    const sentence = await prisma.conjugationSentence.findFirst({ where: { group } })
+    res.json(sentence ?? null)
+    return
+  }
+
+  const skip = Math.floor(Math.random() * count)
+  const sentence = await prisma.conjugationSentence.findFirst({ where, skip })
+  res.json(sentence)
+})
+
 const port = Number(process.env.PORT ?? 3001)
 app.listen(port, () => {
   console.log(`Backend listening on http://localhost:${port}`)
