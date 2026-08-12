@@ -30,7 +30,7 @@ app.get('/words/categories', async (req, res) => {
 
   if (learnerName) {
     const progress = await prisma.wordProgress.findMany({
-      where: { learnerName },
+      where: { learnerName, learned: true },
       select: { wordId: true },
     })
     const wordIds = progress.map((p) => p.wordId)
@@ -53,9 +53,73 @@ app.get('/words/categories', async (req, res) => {
   res.json(categories)
 })
 
+app.get('/words/category-stats', async (req, res) => {
+  const category = typeof req.query.category === 'string' ? req.query.category : undefined
+  const learnerName = typeof req.query.learner === 'string' ? req.query.learner.trim() : undefined
+  if (!category) {
+    res.status(400).json({ error: 'category is required' })
+    return
+  }
+
+  const total = await prisma.word.count({ where: { category } })
+  let learned = 0
+  let wrong = 0
+
+  if (learnerName) {
+    const words = await prisma.word.findMany({ where: { category }, select: { id: true } })
+    const wordIds = words.map((w) => w.id)
+    const progress = await prisma.wordProgress.findMany({
+      where: { learnerName, wordId: { in: wordIds } },
+      select: { learned: true },
+    })
+    learned = progress.filter((p) => p.learned).length
+    wrong = progress.filter((p) => !p.learned).length
+  }
+
+  res.json({ total, learned, wrong, unseen: total - learned - wrong })
+})
+
+app.get('/words/deck', async (req, res) => {
+  const category = typeof req.query.category === 'string' ? req.query.category : undefined
+  const learnerName = typeof req.query.learner === 'string' ? req.query.learner.trim() : undefined
+  const filter = typeof req.query.filter === 'string' ? req.query.filter : 'all'
+  const limitParam = typeof req.query.limit === 'string' ? req.query.limit : undefined
+  if (!category) {
+    res.status(400).json({ error: 'category is required' })
+    return
+  }
+
+  const words = await prisma.word.findMany({ where: { category }, include: { forms: true } })
+
+  let filtered = words
+  if (learnerName && (filter === 'unlearned' || filter === 'wrong')) {
+    const wordIds = words.map((w) => w.id)
+    const progress = await prisma.wordProgress.findMany({
+      where: { learnerName, wordId: { in: wordIds } },
+      select: { wordId: true, learned: true },
+    })
+    const learnedMap = new Map(progress.map((p) => [p.wordId, p.learned]))
+    filtered =
+      filter === 'wrong'
+        ? words.filter((w) => learnedMap.get(w.id) === false)
+        : words.filter((w) => learnedMap.get(w.id) !== true)
+  }
+
+  for (let i = filtered.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[filtered[i], filtered[j]] = [filtered[j], filtered[i]]
+  }
+
+  const limit = limitParam && limitParam !== 'all' ? Number(limitParam) : filtered.length
+  const deck = filtered.slice(0, Number.isFinite(limit) && limit > 0 ? limit : filtered.length)
+
+  res.json(deck)
+})
+
 app.post('/progress/word', async (req, res) => {
   const learnerName = typeof req.body.learnerName === 'string' ? req.body.learnerName.trim() : ''
   const wordId = Number(req.body.wordId)
+  const known = typeof req.body.known === 'boolean' ? req.body.known : true
   if (!learnerName || !wordId) {
     res.status(400).json({ error: 'learnerName and wordId are required' })
     return
@@ -63,8 +127,8 @@ app.post('/progress/word', async (req, res) => {
 
   await prisma.wordProgress.upsert({
     where: { learnerName_wordId: { learnerName, wordId } },
-    create: { learnerName, wordId, timesSeen: 1 },
-    update: { timesSeen: { increment: 1 } },
+    create: { learnerName, wordId, learned: known, timesSeen: 1 },
+    update: { learned: known, timesSeen: { increment: 1 } },
   })
   res.json({ ok: true })
 })

@@ -564,3 +564,90 @@ body,
   color: var(--text-muted);
   margin-top: 4px;
 }
+
+.review-start-screen {
+  justify-content: flex-start;
+  padding-top: 64px;
+}
+
+.review-title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 340px;
+}
+
+.review-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-group-label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.review-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.review-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.review-chip.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+}
+
+.review-chip-count {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.review-chip.active .review-chip-count {
+  color: var(--accent);
+}
+
+.review-start-btn {
+  margin-top: 4px;
+}
+
+.review-start-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.deck-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.deck-done-actions {
+  position: static;
+}

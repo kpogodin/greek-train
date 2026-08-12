@@ -27,7 +27,13 @@ function Home() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const category = searchParams.get('category') ?? undefined
+  const filter = searchParams.get('filter') ?? undefined
+  const limit = searchParams.get('limit') ?? undefined
+  const deckMode = Boolean(category && filter)
+
   const [word, setWord] = useState<Word | null>(null)
+  const [queue, setQueue] = useState<Word[]>([])
+  const [deckDone, setDeckDone] = useState(false)
   const [error, setError] = useState(false)
   const [empty, setEmpty] = useState(false)
   const [hideHints, setHideHintsState] = useState(getHideHints)
@@ -61,7 +67,7 @@ function Home() {
     screen.style.backgroundColor = `color-mix(in srgb, ${color} ${Math.round(intensity * 45)}%, var(--bg))`
   }, [])
 
-  const fetchWord = useCallback(
+  const fetchRandomWord = useCallback(
     (excludeId?: number) => {
       setError(false)
       api
@@ -86,24 +92,84 @@ function Home() {
     [category, resetCardStyle],
   )
 
+  const fetchDeck = useCallback(() => {
+    if (!category || !filter) return
+    setError(false)
+    setDeckDone(false)
+    const learnerName = getLearnerName()
+    api
+      .get<Word[]>('/words/deck', {
+        params: {
+          category,
+          filter,
+          ...(limit ? { limit } : {}),
+          ...(learnerName ? { learner: learnerName } : {}),
+        },
+      })
+      .then((res) => {
+        if (res.data.length === 0) {
+          setEmpty(true)
+          setQueue([])
+          setWord(null)
+          return
+        }
+        setEmpty(false)
+        setQueue(res.data)
+        setWord(res.data[0])
+        setRevealed(false)
+        resetCardStyle(false)
+      })
+      .catch(() => setError(true))
+  }, [category, filter, limit, resetCardStyle])
+
   useEffect(() => {
-    fetchWord(word?.id)
+    if (deckMode) {
+      fetchDeck()
+    } else {
+      fetchRandomWord()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchWord])
+  }, [deckMode, fetchDeck])
+
+  const postProgress = useCallback((wordId: number, known: boolean) => {
+    const learnerName = getLearnerName()
+    if (!learnerName) return
+    api.post('/progress/word', { learnerName, wordId, known }).catch(() => {})
+  }, [])
 
   const markKnown = useCallback(() => {
     if (!word) return
-    const learnerName = getLearnerName()
-    if (learnerName) {
-      api.post('/progress/word', { learnerName, wordId: word.id }).catch(() => {})
+    postProgress(word.id, true)
+    if (deckMode) {
+      const rest = queue.slice(1)
+      setQueue(rest)
+      if (rest.length === 0) {
+        setDeckDone(true)
+        setWord(null)
+      } else {
+        setWord(rest[0])
+        setRevealed(false)
+        resetCardStyle(false)
+      }
+    } else {
+      fetchRandomWord(word.id)
     }
-    fetchWord(word.id)
-  }, [word, fetchWord])
+  }, [word, queue, deckMode, postProgress, fetchRandomWord, resetCardStyle])
 
   const markUnknown = useCallback(() => {
     if (!word) return
-    fetchWord(word.id)
-  }, [word, fetchWord])
+    postProgress(word.id, false)
+    if (deckMode) {
+      const [first, ...rest] = queue
+      const requeued = rest.length > 0 ? [...rest, first] : queue
+      setQueue(requeued)
+      setWord(requeued[0])
+      setRevealed(false)
+      resetCardStyle(false)
+    } else {
+      fetchRandomWord(word.id)
+    }
+  }, [word, queue, deckMode, postProgress, fetchRandomWord, resetCardStyle])
 
   const toggleHideHints = useCallback(() => {
     setHideHintsState((v) => {
@@ -169,6 +235,20 @@ function Home() {
   let content
   if (error) {
     content = <p className="status">Не удалось загрузить слова.</p>
+  } else if (deckMode && deckDone) {
+    content = (
+      <div className="deck-done">
+        <p className="status">Готово! Все слова пройдены 🎉</p>
+        <div className="bottom-bar deck-done-actions">
+          <button type="button" className="action-btn" onClick={fetchDeck}>
+            Ещё раз
+          </button>
+          <button type="button" className="action-btn" onClick={() => navigate('/words')}>
+            Категории
+          </button>
+        </div>
+      </div>
+    )
   } else if (empty) {
     content = <p className="status">Слов пока нет — импортируй CSV на бэкенде.</p>
   } else if (!word) {
@@ -212,6 +292,8 @@ function Home() {
     )
   }
 
+  const showTinderControls = word && !error && !empty && !(deckMode && deckDone)
+
   return (
     <section
       className="screen word-screen"
@@ -220,10 +302,19 @@ function Home() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <button type="button" className="back-btn" onClick={() => navigate('/words')}>
+      <button
+        type="button"
+        className="back-btn"
+        onClick={() => navigate(category ? `/words/review?category=${encodeURIComponent(category)}` : '/words')}
+      >
         ← Категории
       </button>
-      {word?.category && <div className="word-category-badge">{word.category}</div>}
+      {word?.category && (
+        <div className="word-category-badge">
+          {word.category}
+          {deckMode && ` · ${queue.length}`}
+        </div>
+      )}
       <button
         type="button"
         className={`hide-hints-toggle${hideHints ? ' active' : ''}`}
@@ -232,7 +323,7 @@ function Home() {
         {hideHints ? '🙈' : '👁'} Подсказки
       </button>
       {content}
-      {word && !error && !empty && (
+      {showTinderControls && (
         <div className="tinder-controls">
           <button
             type="button"

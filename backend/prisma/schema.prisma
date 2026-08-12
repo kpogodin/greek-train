@@ -44,6 +44,7 @@ model WordProgress {
   id          Int      @id @default(autoincrement())
   learnerName String
   wordId      Int
+  learned     Boolean  @default(false)
   timesSeen   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

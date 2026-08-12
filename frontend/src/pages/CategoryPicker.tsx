@@ -52,8 +52,11 @@ function CategoryPicker() {
   }, [])
 
   const goToPractice = (category?: string) => {
-    const query = category ? `?category=${encodeURIComponent(category)}` : ''
-    navigate(`/words/practice${query}`)
+    if (!category) {
+      navigate('/words/practice')
+      return
+    }
+    navigate(`/words/review?category=${encodeURIComponent(category)}`)
   }
 
   const prepositions = categories.find((c) => c.category === PREPOSITIONS_CATEGORY)
