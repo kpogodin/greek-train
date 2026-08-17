@@ -11,8 +11,8 @@ function Menu() {
         <button type="button" className="menu-btn" onClick={() => navigate('/words')}>
           Слова (Λέξεις)
         </button>
-        <button type="button" className="menu-btn" onClick={() => navigate('/declension-1')}>
-          Спряжение 1 (Α΄ Συζυγία)
+        <button type="button" className="menu-btn" onClick={() => navigate('/grammar')}>
+          Грамматика
         </button>
         <button type="button" className="menu-btn" onClick={() => navigate('/small-talk')}>
           Small Talk (Κουβεντούλα)

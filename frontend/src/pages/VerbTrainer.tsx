@@ -15,18 +15,16 @@ interface ConjugationSentence {
 
 type Status = 'idle' | 'correct' | 'incorrect'
 
-const HINT_ROWS = [
-  ['Εγώ', '-ω'],
-  ['Εσύ', '-εις'],
-  ['Αυτός', '-ει'],
-  ['Εμείς', '-ουμε'],
-  ['Εσείς', '-ετε'],
-  ['Αυτοί', '-ουν(ε)'],
-]
-
 const SWIPE_MIN_DISTANCE = 60
 
-function Declension1() {
+interface VerbTrainerProps {
+  group: number
+  hintRows: [string, string][]
+  hintLabel: string
+  backTo: string
+}
+
+function VerbTrainer({ group, hintRows, hintLabel, backTo }: VerbTrainerProps) {
   const navigate = useNavigate()
   const [sentence, setSentence] = useState<ConjugationSentence | null>(null)
   const [error, setError] = useState(false)
@@ -53,7 +51,7 @@ function Declension1() {
       setError(false)
       api
         .get<ConjugationSentence | null>('/conjugation/random', {
-          params: { group: 1, ...(excludeId ? { exclude: excludeId } : {}) },
+          params: { group, ...(excludeId ? { exclude: excludeId } : {}) },
         })
         .then((res) => {
           if (!res.data) {
@@ -68,13 +66,13 @@ function Declension1() {
         })
         .catch(() => setError(true))
     },
-    [resetCardStyle],
+    [group, resetCardStyle],
   )
 
   useEffect(() => {
     fetchSentence()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [group])
 
   const check = useCallback(() => {
     if (!sentence) return
@@ -207,14 +205,14 @@ function Declension1() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <button type="button" className="back-btn" onClick={() => navigate('/')}>
-        ← Меню
+      <button type="button" className="back-btn" onClick={() => navigate(backTo)}>
+        ← Назад
       </button>
       <button
         type="button"
         className="hint-btn"
         onClick={() => setShowHint((v) => !v)}
-        aria-label="Подсказка по спряжению"
+        aria-label={hintLabel}
       >
         ?
       </button>
@@ -222,10 +220,10 @@ function Declension1() {
         <div className="hint-popover">
           <table>
             <tbody>
-              {HINT_ROWS.map(([pronoun, ending]) => (
+              {hintRows.map(([pronoun, form]) => (
                 <tr key={pronoun}>
                   <td>{pronoun}</td>
-                  <td>{ending}</td>
+                  <td>{form}</td>
                 </tr>
               ))}
             </tbody>
@@ -247,4 +245,4 @@ function Declension1() {
   )
 }
 
-export default Declension1
+export default VerbTrainer
