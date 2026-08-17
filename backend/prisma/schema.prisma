@@ -8,13 +8,16 @@ datasource db {
 }
 
 model Word {
-  id            Int        @id @default(autoincrement())
-  translationRu String
-  pronunciation String?
-  category      String?
-  difficulty    Int        @default(3)
-  forms         WordForm[]
-  createdAt     DateTime   @default(now())
+  id                    Int        @id @default(autoincrement())
+  translationRu         String
+  pronunciation         String?
+  category              String?
+  difficulty            Int        @default(3)
+  exampleGreek          String?
+  examplePronunciation  String?
+  exampleTranslationRu  String?
+  forms                 WordForm[]
+  createdAt             DateTime   @default(now())
 }
 
 model WordForm {

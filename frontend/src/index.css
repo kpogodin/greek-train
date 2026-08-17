@@ -214,6 +214,13 @@ body,
   font-size: 22px;
 }
 
+.word-example {
+  max-width: 320px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
 .category-screen {
   justify-content: flex-start;
   padding-top: 64px;

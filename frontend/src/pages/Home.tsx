@@ -15,6 +15,9 @@ interface Word {
   pronunciation: string | null
   category: string | null
   difficulty: number
+  exampleGreek: string | null
+  examplePronunciation: string | null
+  exampleTranslationRu: string | null
   forms: WordForm[]
 }
 
@@ -286,6 +289,18 @@ function Home() {
               {word.translationRu}
             </span>
           </div>
+          {word.exampleGreek && (
+            <div className="hint-row word-example">
+              <span className="hint-icon" aria-label="Пример">
+                ✏️
+              </span>
+              <span className={blurred ? ' blurred-text' : ''}>
+                {word.exampleGreek}
+                {word.examplePronunciation && ` — ${word.examplePronunciation}`}
+                {word.exampleTranslationRu && ` — ${word.exampleTranslationRu}`}
+              </span>
+            </div>
+          )}
         </div>
         <p className="swipe-hint">← Не знаю · Знаю →</p>
       </div>

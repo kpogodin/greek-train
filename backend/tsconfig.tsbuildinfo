@@ -1,1 +1,1 @@
-{"root":["./src/assigndifficulty.ts","./src/importconjugation.ts","./src/importcsv.ts","./src/importsmalltalk.ts","./src/index.ts","./src/patchcheatsheet.ts","./src/prisma.ts"],"version":"5.9.3"}
+{"root":["./src/assigndifficulty.ts","./src/importconjugation.ts","./src/importcsv.ts","./src/importsmalltalk.ts","./src/index.ts","./src/patchcheatsheet.ts","./src/patchwordexamples.ts","./src/prisma.ts"],"version":"5.9.3"}
