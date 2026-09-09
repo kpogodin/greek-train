@@ -15,26 +15,26 @@ const gender: RuleSection = {
       <h3 className="rule-subheading">Мужской род (ο) — обычно -ος, -ης, -ας</h3>
       <RuleTable
         rows={[
-          { greek: 'ο άνθρωπ{ος}', example: 'человек' },
-          { greek: 'ο μαθητ{ής}', example: 'ученик' },
-          { greek: 'ο άντρ{ας}', example: 'мужчина' },
+          { greek: '[ο] άνθρωπ{ος}', example: 'человек' },
+          { greek: '[ο] μαθητ{ής}', example: 'ученик' },
+          { greek: '[ο] άντρ{ας}', example: 'мужчина' },
         ]}
       />
 
       <h3 className="rule-subheading">Женский род (η) — обычно -α, -η</h3>
       <RuleTable
         rows={[
-          { greek: 'η γυναίκ{α}', example: 'женщина' },
-          { greek: 'η αδερφ{ή}', example: 'сестра' },
+          { greek: '[η] γυναίκ{α}', example: 'женщина' },
+          { greek: '[η] αδερφ{ή}', example: 'сестра' },
         ]}
       />
 
       <h3 className="rule-subheading">Средний род (το) — обычно -ο, -ι, -μα</h3>
       <RuleTable
         rows={[
-          { greek: 'το βιβλί{ο}', example: 'книга' },
-          { greek: 'το παιδ{ί}', example: 'ребёнок' },
-          { greek: 'το όνο{μα}', example: 'имя' },
+          { greek: '[το] βιβλί{ο}', example: 'книга' },
+          { greek: '[το] παιδ{ί}', example: 'ребёнок' },
+          { greek: '[το] όνο{μα}', example: 'имя' },
         ]}
       />
     </>
