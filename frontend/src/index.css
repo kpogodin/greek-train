@@ -4,6 +4,7 @@
   --bg: #fff;
   --border: #e5e4e7;
   --accent: #2f6feb;
+  --ending: #b6540f;
 
   color-scheme: light dark;
   font: 16px/1.45 system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -19,6 +20,7 @@
     --bg: #16171d;
     --border: #2e303a;
     --accent: #6ea8ff;
+    --ending: #ffa94d;
   }
 }
 
@@ -757,6 +759,10 @@ body,
   font-size: 14px;
   font-style: italic;
   color: var(--text-muted);
+}
+
+.rule-ending {
+  color: var(--ending);
 }
 
 @media (max-width: 720px) {

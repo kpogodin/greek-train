@@ -1,3 +1,5 @@
+import { renderHighlighted } from './highlight'
+
 export interface RuleTableRow {
   greek: string
   example?: string
@@ -10,11 +12,11 @@ function RuleTable({ rows }: { rows: RuleTableRow[] }) {
         {rows.map((row) => (
           <tr className="rule-table-row" key={row.greek}>
             <td>
-              <span className="rule-table-greek">{row.greek}</span>
+              <span className="rule-table-greek">{renderHighlighted(row.greek)}</span>
               {row.example && (
                 <>
                   {' — '}
-                  <span className="rule-table-example">{row.example}</span>
+                  <span className="rule-table-example">{renderHighlighted(row.example)}</span>
                 </>
               )}
             </td>
