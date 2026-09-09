@@ -754,23 +754,15 @@ body,
   white-space: nowrap;
 }
 
-.rule-table-translation {
-  color: var(--text-muted);
-}
-
 .rule-table-example-row td {
   padding: 0 12px 12px;
   border: none;
 }
 
 .rule-table-example {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.rule-table-example-greek {
+  font-size: 14px;
   font-style: italic;
-  color: var(--text);
+  color: var(--text-muted);
 }
 
 @media (max-width: 720px) {

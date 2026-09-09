@@ -2,11 +2,7 @@ import { Fragment } from 'react'
 
 export interface RuleTableRow {
   greek: string
-  translation: string
-  example?: {
-    greek: string
-    translation: string
-  }
+  example?: string
 }
 
 function RuleTable({ rows }: { rows: RuleTableRow[] }) {
@@ -17,15 +13,10 @@ function RuleTable({ rows }: { rows: RuleTableRow[] }) {
           <Fragment key={row.greek}>
             <tr className="rule-table-row">
               <td className="rule-table-greek">{row.greek}</td>
-              <td className="rule-table-translation">{row.translation}</td>
             </tr>
             {row.example && (
               <tr className="rule-table-example-row">
-                <td colSpan={2} className="rule-table-example">
-                  <span className="rule-table-example-greek">{row.example.greek}</span>
-                  {' — '}
-                  {row.example.translation}
-                </td>
+                <td className="rule-table-example">{row.example}</td>
               </tr>
             )}
           </Fragment>
