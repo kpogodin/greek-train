@@ -8,6 +8,7 @@ import VerbToBe from './pages/VerbToBe'
 import VerbsA from './pages/VerbsA'
 import VerbsB1 from './pages/VerbsB1'
 import SmallTalk from './pages/SmallTalk'
+import Rules from './pages/Rules'
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/grammar/verbs-a" element={<VerbsA />} />
         <Route path="/grammar/verbs-b1" element={<VerbsB1 />} />
         <Route path="/small-talk" element={<SmallTalk />} />
+        <Route path="/rules" element={<Rules />} />
       </Routes>
     </BrowserRouter>
   )
