@@ -741,6 +741,16 @@ body,
   font-size: 14px;
 }
 
+.rule-callout {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--text-muted) 10%, transparent);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .rule-table {
   width: 100%;
   border-collapse: collapse;
