@@ -4,6 +4,7 @@ import plural from './plural'
 import accusativeSingular from './accusativeSingular'
 import accusativePlural from './accusativePlural'
 import verbsA from './verbsA'
+import verbsB1 from './verbsB1'
 import type { RuleSection } from '../types'
 
 // Add new rule sections here — each one gets its own file in this folder.
@@ -14,6 +15,7 @@ export const ruleSections: RuleSection[] = [
   accusativeSingular,
   accusativePlural,
   verbsA,
+  verbsB1,
 ]
 
 export type { RuleSection }
