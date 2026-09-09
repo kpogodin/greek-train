@@ -25,7 +25,6 @@ const gender: RuleSection = {
       <RuleTable
         rows={[
           { greek: 'η γυναίκ{α}', example: 'женщина' },
-          { greek: 'η μαθήτρι{α}', example: 'ученица' },
           { greek: 'η αδερφ{ή}', example: 'сестра' },
         ]}
       />
