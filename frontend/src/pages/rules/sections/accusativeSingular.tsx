@@ -32,6 +32,9 @@ const accusativeSingular: RuleSection = {
       <h3 className="rule-subheading">Женский род</h3>
       <p className="rule-note">Окончание существительного не меняется — только артикль.</p>
       <RuleArrowRow variant="pattern" items={[{ from: '[η]', to: '[τη(ν)]' }]} />
+      <p className="rule-note">
+        (ν добавляется перед словом, которое начинается с гласной — иначе используется τη)
+      </p>
       <RuleArrowRow
         items={[
           { from: '[η] γυναίκα', to: '[τη] γυναίκα' },
