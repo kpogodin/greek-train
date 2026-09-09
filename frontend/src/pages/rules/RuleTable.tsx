@@ -1,5 +1,3 @@
-import { Fragment } from 'react'
-
 export interface RuleTableRow {
   greek: string
   example?: string
@@ -10,16 +8,17 @@ function RuleTable({ rows }: { rows: RuleTableRow[] }) {
     <table className="rule-table">
       <tbody>
         {rows.map((row) => (
-          <Fragment key={row.greek}>
-            <tr className="rule-table-row">
-              <td className="rule-table-greek">{row.greek}</td>
-            </tr>
-            {row.example && (
-              <tr className="rule-table-example-row">
-                <td className="rule-table-example">{row.example}</td>
-              </tr>
-            )}
-          </Fragment>
+          <tr className="rule-table-row" key={row.greek}>
+            <td>
+              <span className="rule-table-greek">{row.greek}</span>
+              {row.example && (
+                <>
+                  {' — '}
+                  <span className="rule-table-example">{row.example}</span>
+                </>
+              )}
+            </td>
+          </tr>
         ))}
       </tbody>
     </table>
