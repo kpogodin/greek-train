@@ -20,6 +20,9 @@ function Menu() {
         <button type="button" className="menu-btn" onClick={() => navigate('/rules')}>
           Правила
         </button>
+        <button type="button" className="menu-btn" onClick={() => navigate('/irregular-verbs')}>
+          Неправильные глаголы
+        </button>
       </div>
     </section>
   )
