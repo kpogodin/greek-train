@@ -857,3 +857,92 @@ body,
     max-width: 100%;
   }
 }
+
+.words-page {
+  min-height: 100svh;
+  padding: 64px 24px 48px;
+}
+
+.words-page-content {
+  max-width: 900px;
+}
+
+.words-group {
+  margin-bottom: 32px;
+  break-inside: avoid-page;
+}
+
+.words-list {
+  column-gap: 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.words-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--border);
+  break-inside: avoid;
+}
+
+.words-list li:first-child {
+  border-top: none;
+}
+
+.word-greek {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.word-ru {
+  color: var(--text-muted);
+  text-align: right;
+  font-size: 14px;
+}
+
+@media (min-width: 640px) {
+  .words-list {
+    column-count: 2;
+  }
+
+  .words-list li {
+    border-top: none;
+    padding: 4px 0;
+  }
+}
+
+@media (min-width: 960px) {
+  .words-list {
+    column-count: 3;
+  }
+}
+
+@media print {
+  .back-btn {
+    display: none;
+  }
+
+  .words-page {
+    --bg: #ffffff;
+    --text: #111111;
+    --text-muted: #444444;
+    --border: #cccccc;
+    --accent: #111111;
+    background: #fff;
+    color: #111;
+    padding: 12px 0 0;
+  }
+
+  .words-page .rule-section-title {
+    background: none;
+    border-left: 3px solid #111;
+  }
+
+  .words-list {
+    column-count: 3;
+  }
+}

@@ -23,6 +23,9 @@ function Menu() {
         <button type="button" className="menu-btn" onClick={() => navigate('/irregular-verbs')}>
           Неправильные глаголы
         </button>
+        <button type="button" className="menu-btn" onClick={() => navigate('/function-words')}>
+          Предлоги и служебные слова
+        </button>
       </div>
     </section>
   )

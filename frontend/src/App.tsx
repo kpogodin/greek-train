@@ -10,6 +10,7 @@ import VerbsB1 from './pages/VerbsB1'
 import SmallTalk from './pages/SmallTalk'
 import Rules from './pages/Rules'
 import IrregularVerbs from './pages/IrregularVerbs'
+import FunctionWords from './pages/FunctionWords'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/small-talk" element={<SmallTalk />} />
         <Route path="/rules" element={<Rules />} />
         <Route path="/irregular-verbs" element={<IrregularVerbs />} />
+        <Route path="/function-words" element={<FunctionWords />} />
       </Routes>
     </BrowserRouter>
   )
