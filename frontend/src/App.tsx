@@ -11,6 +11,9 @@ import SmallTalk from './pages/SmallTalk'
 import Rules from './pages/Rules'
 import IrregularVerbs from './pages/IrregularVerbs'
 import FunctionWords from './pages/FunctionWords'
+import Numbers from './pages/Numbers'
+import TimeWords from './pages/TimeWords'
+import Alphabet from './pages/Alphabet'
 
 function App() {
   return (
@@ -28,6 +31,9 @@ function App() {
         <Route path="/rules" element={<Rules />} />
         <Route path="/irregular-verbs" element={<IrregularVerbs />} />
         <Route path="/function-words" element={<FunctionWords />} />
+        <Route path="/numbers" element={<Numbers />} />
+        <Route path="/time" element={<TimeWords />} />
+        <Route path="/alphabet" element={<Alphabet />} />
       </Routes>
     </BrowserRouter>
   )

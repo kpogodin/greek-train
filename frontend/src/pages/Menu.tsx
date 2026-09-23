@@ -8,8 +8,17 @@ function Menu() {
     <section className="screen">
       <LearnerBadge />
       <div className="menu">
+        <button type="button" className="menu-btn" onClick={() => navigate('/alphabet')}>
+          Алфавит
+        </button>
         <button type="button" className="menu-btn" onClick={() => navigate('/words')}>
           Слова (Λέξεις)
+        </button>
+        <button type="button" className="menu-btn" onClick={() => navigate('/numbers')}>
+          Числа
+        </button>
+        <button type="button" className="menu-btn" onClick={() => navigate('/time')}>
+          Время
         </button>
         <button type="button" className="menu-btn" onClick={() => navigate('/grammar')}>
           Грамматика
