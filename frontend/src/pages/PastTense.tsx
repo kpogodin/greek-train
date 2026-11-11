@@ -5,48 +5,49 @@ import RuleTable from './rules/RuleTable'
 interface IrregularPast {
   present: string
   ru: string
+  na: string
   past: string
   pastWe: string
 }
 
 const IRREGULAR: IrregularPast[] = [
-  { present: 'είμαι', ru: 'быть', past: 'ήμουν(α)', pastWe: 'ήμασταν' },
-  { present: 'έχω', ru: 'иметь', past: 'είχα', pastWe: 'είχαμε' },
-  { present: 'θέλω', ru: 'хотеть', past: 'ήθελα', pastWe: 'θέλαμε' },
-  { present: 'ξέρω', ru: 'знать', past: 'ήξερα', pastWe: 'ξέραμε' },
-  { present: 'κάνω', ru: 'делать', past: 'έκανα', pastWe: 'κάναμε' },
-  { present: 'μπορώ', ru: 'мочь', past: 'μπόρεσα', pastWe: 'μπορέσαμε' },
-  { present: 'πηγαίνω / πάω', ru: 'идти, ехать', past: 'πήγα', pastWe: 'πήγαμε' },
-  { present: 'έρχομαι', ru: 'приходить', past: 'ήρθα', pastWe: 'ήρθαμε' },
-  { present: 'τρώω', ru: 'есть', past: 'έφαγα', pastWe: 'φάγαμε' },
-  { present: 'πίνω', ru: 'пить', past: 'ήπια', pastWe: 'ήπιαμε' },
-  { present: 'λέω', ru: 'говорить, сказать', past: 'είπα', pastWe: 'είπαμε' },
-  { present: 'βλέπω', ru: 'видеть', past: 'είδα', pastWe: 'είδαμε' },
-  { present: 'βρίσκω', ru: 'находить', past: 'βρήκα', pastWe: 'βρήκαμε' },
-  { present: 'βγαίνω', ru: 'выходить', past: 'βγήκα', pastWe: 'βγήκαμε' },
-  { present: 'μπαίνω', ru: 'входить', past: 'μπήκα', pastWe: 'μπήκαμε' },
-  { present: 'ανεβαίνω', ru: 'подниматься', past: 'ανέβηκα', pastWe: 'ανεβήκαμε' },
-  { present: 'κατεβαίνω', ru: 'спускаться', past: 'κατέβηκα', pastWe: 'κατεβήκαμε' },
-  { present: 'παίρνω', ru: 'брать', past: 'πήρα', pastWe: 'πήραμε' },
-  { present: 'δίνω', ru: 'давать', past: 'έδωσα', pastWe: 'δώσαμε' },
-  { present: 'βάζω', ru: 'класть', past: 'έβαλα', pastWe: 'βάλαμε' },
-  { present: 'βγάζω', ru: 'вынимать, снимать', past: 'έβγαλα', pastWe: 'βγάλαμε' },
-  { present: 'φέρνω', ru: 'приносить', past: 'έφερα', pastWe: 'φέραμε' },
-  { present: 'φεύγω', ru: 'уходить, уезжать', past: 'έφυγα', pastWe: 'φύγαμε' },
-  { present: 'μαθαίνω', ru: 'учить, узнавать', past: 'έμαθα', pastWe: 'μάθαμε' },
-  { present: 'καταλαβαίνω', ru: 'понимать', past: 'κατάλαβα', pastWe: 'καταλάβαμε' },
-  { present: 'προλαβαίνω', ru: 'успевать', past: 'πρόλαβα', pastWe: 'προλάβαμε' },
-  { present: 'παθαίνω', ru: 'пострадать, «случиться»', past: 'έπαθα', pastWe: 'πάθαμε' },
-  { present: 'πεθαίνω', ru: 'умирать', past: 'πέθανα', pastWe: 'πεθάναμε' },
-  { present: 'μένω', ru: 'жить, оставаться', past: 'έμεινα', pastWe: 'μείναμε' },
-  { present: 'περιμένω', ru: 'ждать', past: 'περίμενα', pastWe: 'περιμέναμε' },
-  { present: 'στέλνω', ru: 'отправлять', past: 'έστειλα', pastWe: 'στείλαμε' },
-  { present: 'πλένω', ru: 'мыть', past: 'έπλυνα', pastWe: 'πλύναμε' },
-  { present: 'πέφτω', ru: 'падать', past: 'έπεσα', pastWe: 'πέσαμε' },
-  { present: 'γίνομαι', ru: 'становиться', past: 'έγινα', pastWe: 'γίναμε' },
-  { present: 'κάθομαι', ru: 'сидеть, садиться', past: 'κάθισα', pastWe: 'καθίσαμε' },
-  { present: 'χαίρομαι', ru: 'радоваться', past: 'χάρηκα', pastWe: 'χαρήκαμε' },
-  { present: 'μου αρέσει', ru: 'мне нравится', past: 'μου άρεσε', pastWe: '—' },
+  { present: 'είμαι', ru: 'быть', na: 'να είμαι', past: 'ήμουν(α)', pastWe: 'ήμασταν' },
+  { present: 'έχω', ru: 'иметь', na: 'να έχω', past: 'είχα', pastWe: 'είχαμε' },
+  { present: 'θέλω', ru: 'хотеть', na: 'να θέλω', past: 'ήθελα', pastWe: 'θέλαμε' },
+  { present: 'ξέρω', ru: 'знать', na: 'να ξέρω', past: 'ήξερα', pastWe: 'ξέραμε' },
+  { present: 'κάνω', ru: 'делать', na: 'να κάνω', past: 'έκανα', pastWe: 'κάναμε' },
+  { present: 'μπορώ', ru: 'мочь', na: 'να μπορέσω', past: 'μπόρεσα', pastWe: 'μπορέσαμε' },
+  { present: 'πηγαίνω / πάω', ru: 'идти, ехать', na: 'να πάω', past: 'πήγα', pastWe: 'πήγαμε' },
+  { present: 'έρχομαι', ru: 'приходить', na: 'να έρθω', past: 'ήρθα', pastWe: 'ήρθαμε' },
+  { present: 'τρώω', ru: 'есть', na: 'να φάω', past: 'έφαγα', pastWe: 'φάγαμε' },
+  { present: 'πίνω', ru: 'пить', na: 'να πιω', past: 'ήπια', pastWe: 'ήπιαμε' },
+  { present: 'λέω', ru: 'говорить, сказать', na: 'να πω', past: 'είπα', pastWe: 'είπαμε' },
+  { present: 'βλέπω', ru: 'видеть', na: 'να δω', past: 'είδα', pastWe: 'είδαμε' },
+  { present: 'βρίσκω', ru: 'находить', na: 'να βρω', past: 'βρήκα', pastWe: 'βρήκαμε' },
+  { present: 'βγαίνω', ru: 'выходить', na: 'να βγω', past: 'βγήκα', pastWe: 'βγήκαμε' },
+  { present: 'μπαίνω', ru: 'входить', na: 'να μπω', past: 'μπήκα', pastWe: 'μπήκαμε' },
+  { present: 'ανεβαίνω', ru: 'подниматься', na: 'να ανέβω', past: 'ανέβηκα', pastWe: 'ανεβήκαμε' },
+  { present: 'κατεβαίνω', ru: 'спускаться', na: 'να κατέβω', past: 'κατέβηκα', pastWe: 'κατεβήκαμε' },
+  { present: 'παίρνω', ru: 'брать', na: 'να πάρω', past: 'πήρα', pastWe: 'πήραμε' },
+  { present: 'δίνω', ru: 'давать', na: 'να δώσω', past: 'έδωσα', pastWe: 'δώσαμε' },
+  { present: 'βάζω', ru: 'класть', na: 'να βάλω', past: 'έβαλα', pastWe: 'βάλαμε' },
+  { present: 'βγάζω', ru: 'вынимать, снимать', na: 'να βγάλω', past: 'έβγαλα', pastWe: 'βγάλαμε' },
+  { present: 'φέρνω', ru: 'приносить', na: 'να φέρω', past: 'έφερα', pastWe: 'φέραμε' },
+  { present: 'φεύγω', ru: 'уходить, уезжать', na: 'να φύγω', past: 'έφυγα', pastWe: 'φύγαμε' },
+  { present: 'μαθαίνω', ru: 'учить, узнавать', na: 'να μάθω', past: 'έμαθα', pastWe: 'μάθαμε' },
+  { present: 'καταλαβαίνω', ru: 'понимать', na: 'να καταλάβω', past: 'κατάλαβα', pastWe: 'καταλάβαμε' },
+  { present: 'προλαβαίνω', ru: 'успевать', na: 'να προλάβω', past: 'πρόλαβα', pastWe: 'προλάβαμε' },
+  { present: 'παθαίνω', ru: 'пострадать, «случиться»', na: 'να πάθω', past: 'έπαθα', pastWe: 'πάθαμε' },
+  { present: 'πεθαίνω', ru: 'умирать', na: 'να πεθάνω', past: 'πέθανα', pastWe: 'πεθάναμε' },
+  { present: 'μένω', ru: 'жить, оставаться', na: 'να μείνω', past: 'έμεινα', pastWe: 'μείναμε' },
+  { present: 'περιμένω', ru: 'ждать', na: 'να περιμένω', past: 'περίμενα', pastWe: 'περιμέναμε' },
+  { present: 'στέλνω', ru: 'отправлять', na: 'να στείλω', past: 'έστειλα', pastWe: 'στείλαμε' },
+  { present: 'πλένω', ru: 'мыть', na: 'να πλύνω', past: 'έπλυνα', pastWe: 'πλύναμε' },
+  { present: 'πέφτω', ru: 'падать', na: 'να πέσω', past: 'έπεσα', pastWe: 'πέσαμε' },
+  { present: 'γίνομαι', ru: 'становиться', na: 'να γίνω', past: 'έγινα', pastWe: 'γίναμε' },
+  { present: 'κάθομαι', ru: 'сидеть, садиться', na: 'να καθίσω', past: 'κάθισα', pastWe: 'καθίσαμε' },
+  { present: 'χαίρομαι', ru: 'радоваться', na: 'να χαρώ', past: 'χάρηκα', pastWe: 'χαρήκαμε' },
+  { present: 'μου αρέσει', ru: 'мне нравится', na: 'να μου αρέσει', past: 'μου άρεσε', pastWe: '—' },
 ]
 
 function PastTense() {
@@ -307,7 +308,8 @@ function PastTense() {
 
         <h2 className="rule-section-title">Неправильные глаголы</h2>
         <p className="rule-note">
-          Их основа прошедшего не выводится по правилам — учить наизусть. Окончания при этом те же:
+          Их основа прошедшего не выводится по правилам — учить наизусть. Подсказка: форма с{' '}
+          <strong>να</strong> почти всегда даёт основу прошедшего (να φύγω → έφυγα). Окончания те же:
           -α, -ες, -ε, -αμε, -ατε, -αν.
         </p>
         <p className="rule-callout">
@@ -319,8 +321,8 @@ function PastTense() {
           <thead>
             <tr>
               <th>Глагол</th>
-              <th>Εγώ</th>
-              <th>Εμείς</th>
+              <th>С να</th>
+              <th>Прошедшее</th>
             </tr>
           </thead>
           <tbody>
@@ -330,8 +332,11 @@ function PastTense() {
                   <span className="past-table-present">{verb.present}</span>
                   <span className="past-table-ru">{verb.ru}</span>
                 </td>
-                <td className="past-table-form">{verb.past}</td>
-                <td className="past-table-form">{verb.pastWe}</td>
+                <td className="past-table-na">{verb.na}</td>
+                <td>
+                  <span className="past-table-form">{verb.past}</span>
+                  {verb.pastWe !== '—' && <span className="past-table-ru">εμείς {verb.pastWe}</span>}
+                </td>
               </tr>
             ))}
           </tbody>
