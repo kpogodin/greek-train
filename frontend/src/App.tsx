@@ -14,6 +14,7 @@ import FunctionWords from './pages/FunctionWords'
 import Numbers from './pages/Numbers'
 import TimeWords from './pages/TimeWords'
 import Alphabet from './pages/Alphabet'
+import PastTense from './pages/PastTense'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/numbers" element={<Numbers />} />
         <Route path="/time" element={<TimeWords />} />
         <Route path="/alphabet" element={<Alphabet />} />
+        <Route path="/past-tense" element={<PastTense />} />
       </Routes>
     </BrowserRouter>
   )

@@ -981,3 +981,42 @@ body,
   color: var(--text-muted);
   cursor: pointer;
 }
+
+.past-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+
+.past-table th {
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border);
+}
+
+.past-table td {
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.past-table-present {
+  display: block;
+  font-weight: 700;
+}
+
+.past-table-ru {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.past-table-form {
+  font-weight: 700;
+  color: var(--ending);
+}
